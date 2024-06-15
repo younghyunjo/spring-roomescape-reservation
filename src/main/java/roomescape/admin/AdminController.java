@@ -1,7 +1,6 @@
 package roomescape.admin;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -16,5 +15,10 @@ public class AdminController {
     @GetMapping("time")
     public String time() {
         return "admin/time";
+    }
+
+    @GetMapping("theme")
+    public String theme() {
+        return "admin/theme";
     }
 }
