@@ -51,6 +51,11 @@ public class ThemeRepository {
         return jdbcTemplate.query(sql, rowMapper);
     }
 
+    public void delete(Long id) {
+        String sql = String.format("delete from %s where %s = ?", TABLE_NAME, COLUMN_ID);
+        jdbcTemplate.update(sql, id);
+    }
+
     private final RowMapper<ThemeEntity> rowMapper = (resultSet, rowNum) ->
             new ThemeEntity(
                     resultSet.getLong(COLUMN_ID),

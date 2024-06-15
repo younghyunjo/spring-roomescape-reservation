@@ -109,4 +109,31 @@ public class MissionStepTest {
                 .statusCode(200)
                 .body("size()", is(2));
     }
+
+    @Test
+    void givenAddThemeWhenDeleteThenDeleted() {
+        //given
+        Map<String, String> theme1 = new HashMap<>();
+        theme1.put("name", "theme1");
+        theme1.put("description", "desc1");
+        theme1.put("thumbnail", "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg");
+
+        RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(theme1)
+                .when().post("/themes");
+
+        //when
+        RestAssured.given().log().all()
+                .when().delete("/themes/1")
+                .then().log().all()
+                .statusCode(200);
+
+        //then
+        RestAssured.given().log().all()
+                .when().get("/themes")
+                .then().log().all()
+                .statusCode(200)
+                .body("size()", is(0));
+    }
 }

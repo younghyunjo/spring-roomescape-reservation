@@ -22,4 +22,9 @@ public class ThemeController {
     List<Theme> themes() {
         return themeService.themes();
     }
+
+    @DeleteMapping("/{id}")
+    void delete(@PathVariable Long id) {
+        themeService.delete(id);
+    }
 }

@@ -16,6 +16,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,6 +59,13 @@ class ThemeServiceTest {
         });
 
         when(themeRepository.themes()).thenReturn(fakeRepository.list());
+
+        doAnswer(invocation -> {
+            Object[] args = invocation.getArguments();
+            Long id = (Long) args[0];
+            fakeRepository.themeEntities.removeIf(e -> e.getId().equals(id));
+            return null;
+        }).when(themeRepository).delete(anyLong());
     }
 
     @AfterEach
@@ -95,5 +104,19 @@ class ThemeServiceTest {
         assertThat(themes.size()).isEqualTo(2);
         assertThat(themes).contains(theme1);
         assertThat(themes).contains(theme2);
+    }
+
+    @Test
+    void givenTheheWhenDeleteThenDeleted() {
+        //given
+        ThemeRequest themeRequest1 = new ThemeRequest("name1", "desc1", "https://i.pinimg.com/236x/6e/bc/46/6ebc461a94a49f9ea3b8bbe2204145d4.jpg");
+        Theme theme1 = themeService.add(themeRequest1);
+
+        //when
+        themeService.delete(theme1.getId());
+
+        //then
+        assertThat(themeService.themes().size()).isEqualTo(0);
+
     }
 }
