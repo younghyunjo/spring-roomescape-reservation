@@ -6,16 +6,18 @@ public class ReservationEntity {
     private String name;
     private String date;
     private Long timeId;
+    private Long themeId;
 
-    public static ReservationEntity of(String name, String date, Long timeId) {
-        return new ReservationEntity(null, name, date, timeId);
+    public static ReservationEntity of(String name, String date, Long timeId, Long themeId) {
+        return new ReservationEntity(null, name, date, timeId, themeId);
     }
 
-    private ReservationEntity(Long id, String  name, String date, Long timeId) {
+    private ReservationEntity(Long id, String  name, String date, Long timeId, Long themeId) {
         this.id = id;
         this.name = name;
         this.date = date;
         this.timeId = timeId;
+        this.themeId = themeId;
     }
 
     public long getId() {
@@ -48,5 +50,13 @@ public class ReservationEntity {
 
     public void setTimeId(Long timeId) {
         this.timeId = timeId;
+    }
+
+    public Long getThemeId() {
+        return themeId;
+    }
+
+    public void setThemeId(Long themeId) {
+        this.themeId = themeId;
     }
 }

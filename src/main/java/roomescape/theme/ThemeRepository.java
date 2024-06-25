@@ -11,8 +11,8 @@ import java.util.List;
 
 @Repository
 public class ThemeRepository {
-    private final static String COLUMN_ID = "id";
     private final static String TABLE_NAME = "theme";
+    private final static String COLUMN_ID = "id";
     private final static String COLUMN_NAME = "name";
     private final static String COLUMN_DESCRIPTION = "description";
     private final static String COLUMN_THUMBNAIL = "thumbnail";
@@ -21,6 +21,10 @@ public class ThemeRepository {
 
     public ThemeRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public static String getTableName() {
+        return TABLE_NAME;
     }
 
     public ThemeEntity add(ThemeEntity entity) {
@@ -63,4 +67,15 @@ public class ThemeRepository {
                     resultSet.getString(COLUMN_DESCRIPTION),
                     resultSet.getString(COLUMN_THUMBNAIL)
             );
+
+    public ThemeEntity theme(Long themeId) {
+        String sql = String.format("select %s, %s, %s, %s from %s where id = ?",
+                COLUMN_ID, COLUMN_NAME, COLUMN_DESCRIPTION, COLUMN_THUMBNAIL, TABLE_NAME);
+        return jdbcTemplate.queryForObject(sql, (resultSet, rowNum) -> new ThemeEntity(
+                resultSet.getLong(COLUMN_ID),
+                resultSet.getString(COLUMN_NAME),
+                resultSet.getString(COLUMN_DESCRIPTION),
+                resultSet.getString(COLUMN_THUMBNAIL)
+        ), themeId);
+    }
 }

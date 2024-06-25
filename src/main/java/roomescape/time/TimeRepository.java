@@ -49,11 +49,6 @@ public class TimeRepository {
         return jdbcTemplate.query(sql, rowMapper);
     }
 
-    private final RowMapper<TimeEntity> rowMapper = (resultSet, rowNum) ->
-            new TimeEntity(
-                    resultSet.getLong(COLUMN_ID),
-                    resultSet.getString(COLUMN_START_AT)
-            );
 
     public void delete(Long id) {
         String sql = String.format("delete from %s where %s = ?", TABLE_NAME, COLUMN_ID);
@@ -68,4 +63,11 @@ public class TimeRepository {
                     resultSet.getString(COLUMN_START_AT)
             ), timeId);
     }
+
+    private final RowMapper<TimeEntity> rowMapper = (resultSet, rowNum) ->
+            new TimeEntity(
+                    resultSet.getLong(COLUMN_ID),
+                    resultSet.getString(COLUMN_START_AT)
+            );
+
 }
