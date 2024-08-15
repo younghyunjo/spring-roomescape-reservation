@@ -3,15 +3,17 @@ package roomescape.reservation
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.stereotype.Repository
+import java.sql.ResultSet
 import java.sql.SQLException
 
 @Repository
 class JdbcReservationRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) : ReservationRepository {
-    override fun save(reservation: Reservation): Reservation {
+    override fun insert(reservation: Reservation): Reservation {
         val sql = generateInsertSql()
         val keyHolder = GeneratedKeyHolder()
+
         jdbcTemplate.update({ connection ->
             val ps = connection.prepareStatement(sql, arrayOf(COLUMN_ID))
             ps.setString(1, reservation.name)
@@ -24,13 +26,37 @@ class JdbcReservationRepository(
         return reservation.copy(id = generatedId)
     }
 
-    private fun generateInsertSql() = "INSERT INTO $TABLE ($COLUMN_NAME, $COLUMN_DATE, $COLUMN_TIME) VALUES (?, ?, ?)"
+    override fun get(): List<Reservation> {
+        val sql = generateSelectSql()
+        return jdbcTemplate.query(sql) { rs, _ -> mapRowToReservation(rs) }
+    }
+
+    private fun generateSelectSql() =
+        """
+        SELECT $COLUMN_ID, $COLUMN_NAME, $COLUMN_DATE, $COLUMN_TIME 
+        FROM $TABLE
+        """.trimIndent()
+
+    private fun generateInsertSql() =
+        """
+        INSERT INTO $TABLE 
+        ($COLUMN_NAME, $COLUMN_DATE, $COLUMN_TIME)  
+        VALUES (?, ?, ?)
+        """.trimIndent()
 
     companion object {
-        private val TABLE = "reservation"
-        private val COLUMN_ID = "id"
-        private val COLUMN_NAME = "name"
-        private val COLUMN_DATE = "date"
-        private val COLUMN_TIME = "time"
+        private const val TABLE = "reservation"
+        private const val COLUMN_ID = "id"
+        private const val COLUMN_NAME = "name"
+        private const val COLUMN_DATE = "date"
+        private const val COLUMN_TIME = "time"
+
+        private fun mapRowToReservation(rs: ResultSet): Reservation =
+            Reservation(
+                id = rs.getLong(COLUMN_ID),
+                name = rs.getString(COLUMN_NAME),
+                date = rs.getString(COLUMN_DATE),
+                time = rs.getString(COLUMN_TIME),
+            )
     }
 }

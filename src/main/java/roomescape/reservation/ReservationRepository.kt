@@ -1,5 +1,7 @@
 package roomescape.reservation
 
 interface ReservationRepository {
-    fun save(reservation: Reservation): Reservation
+    fun insert(reservation: Reservation): Reservation
+
+    fun get(): List<Reservation>
 }
