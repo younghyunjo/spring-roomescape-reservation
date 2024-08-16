@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service
 class ReservationService(
     private val reservationRepository: ReservationRepository,
 ) {
-    fun getReservations(): List<Reservation> = emptyList()
-
     fun add(reservation: Reservation): Reservation {
-        val newReservation = reservationRepository.save(reservation)
+        val newReservation = reservationRepository.insert(reservation)
         return newReservation
     }
+
+    fun get(): List<Reservation> = reservationRepository.get()
 
     fun deleteReservation(id: Long) {
     }

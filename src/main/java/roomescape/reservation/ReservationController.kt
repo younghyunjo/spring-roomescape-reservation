@@ -14,7 +14,7 @@ class ReservationController(
     private val reservationService: ReservationService,
 ) {
     @GetMapping
-    fun getReservations(): List<Reservation> = reservationService.getReservations()
+    fun getReservations(): List<Reservation> = reservationService.get()
 
     @PostMapping
     fun addReservation(
