@@ -31,6 +31,16 @@ class JdbcReservationRepository(
         return jdbcTemplate.query(sql) { rs, _ -> mapRowToReservation(rs) }
     }
 
+    override fun delete(id: Long) {
+        val sql = generateDeleteSql()
+        jdbcTemplate.update(sql, id)
+    }
+
+    private fun generateDeleteSql(): String =
+        """
+        DELETE FROM $TABLE WHERE $COLUMN_ID = ?
+        """.trimIndent()
+
     private fun generateSelectSql() =
         """
         SELECT $COLUMN_ID, $COLUMN_NAME, $COLUMN_DATE, $COLUMN_TIME 

@@ -24,5 +24,5 @@ class ReservationController(
     @DeleteMapping("/{id}")
     fun delete(
         @PathVariable id: Long,
-    ) = reservationService.deleteReservation(id)
+    ) = reservationService.delete(id)
 }
