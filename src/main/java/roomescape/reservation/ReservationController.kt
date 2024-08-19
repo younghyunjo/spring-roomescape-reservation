@@ -14,15 +14,15 @@ class ReservationController(
     private val reservationService: ReservationService,
 ) {
     @GetMapping
-    fun getReservations(): List<Reservation> = reservationService.get()
+    fun get(): List<Reservation> = reservationService.get()
 
     @PostMapping
-    fun addReservation(
+    fun add(
         @RequestBody reservation: Reservation,
     ): Reservation = reservationService.add(reservation)
 
     @DeleteMapping("/{id}")
-    fun deleteReservation(
+    fun delete(
         @PathVariable id: Long,
     ) = reservationService.deleteReservation(id)
 }
