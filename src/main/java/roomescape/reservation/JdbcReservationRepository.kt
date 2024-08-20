@@ -1,29 +1,29 @@
 package roomescape.reservation
 
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.support.GeneratedKeyHolder
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
-import java.sql.SQLException
 
 @Repository
 class JdbcReservationRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) : ReservationRepository {
+    private val simpleJdbcInsert =
+        SimpleJdbcInsert(jdbcTemplate)
+            .withTableName(TABLE)
+            .usingGeneratedKeyColumns(COLUMN_ID)
+
     override fun insert(reservation: Reservation): Reservation {
-        val sql = generateInsertSql()
-        val keyHolder = GeneratedKeyHolder()
+        val params =
+            mapOf(
+                COLUMN_NAME to reservation.name,
+                COLUMN_DATE to reservation.date,
+                COLUMN_TIME to reservation.time,
+            )
 
-        jdbcTemplate.update({ connection ->
-            val ps = connection.prepareStatement(sql, arrayOf(COLUMN_ID))
-            ps.setString(1, reservation.name)
-            ps.setString(2, reservation.date)
-            ps.setString(3, reservation.time)
-            ps
-        }, keyHolder)
-
-        val generatedId = keyHolder.key?.toLong() ?: throw SQLException("Failed to generate ID")
-        return reservation.copy(id = generatedId)
+        val generatedId = simpleJdbcInsert.executeAndReturnKey(params)
+        return reservation.copy(id = generatedId.toLong())
     }
 
     override fun get(): List<Reservation> {
@@ -45,13 +45,6 @@ class JdbcReservationRepository(
         """
         SELECT $COLUMN_ID, $COLUMN_NAME, $COLUMN_DATE, $COLUMN_TIME 
         FROM $TABLE
-        """.trimIndent()
-
-    private fun generateInsertSql() =
-        """
-        INSERT INTO $TABLE 
-        ($COLUMN_NAME, $COLUMN_DATE, $COLUMN_TIME)  
-        VALUES (?, ?, ?)
         """.trimIndent()
 
     companion object {
