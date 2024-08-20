@@ -14,5 +14,6 @@ class ReservationService(
     fun get(): List<Reservation> = reservationRepository.get()
 
     fun delete(id: Long) {
+        reservationRepository.delete(id)
     }
 }

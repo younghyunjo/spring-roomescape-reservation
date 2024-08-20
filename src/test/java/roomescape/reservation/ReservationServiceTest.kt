@@ -3,7 +3,9 @@ package roomescape.reservation
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -31,6 +33,12 @@ class ReservationServiceTest(
                 val reservations = reservationService.get()
                 Then("예약 목록을 반환한다") {
                     reservations shouldBe givenReservations
+                }
+            }
+            When("delete 호출") {
+                every { reservationRepository.delete(any()) } just Runs
+                reservationService.delete(1L)
+                Then("에러가 없다") {
                 }
             }
         }

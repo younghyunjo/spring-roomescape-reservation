@@ -25,7 +25,7 @@ class ReservationControllerE2ETest {
     }
 
     @Test
-    fun addAndGet() {
+    fun addAndGetAndDelete() {
         val params: MutableMap<String, String> = HashMap()
         params["name"] = "브라운"
         params["date"] = "2023-08-05"
@@ -45,6 +45,22 @@ class ReservationControllerE2ETest {
             get("/reservations")
         } Then {
             statusCode(200).body("size()", `is`(1))
+        }
+
+        Given {
+            log().all()
+        } When {
+            delete("/reservations/1")
+        } Then {
+            statusCode(200)
+        }
+
+        Given {
+            log().all()
+        } When {
+            get("/reservations")
+        } Then {
+            statusCode(200).body("size()", `is`(0))
         }
     }
 }
