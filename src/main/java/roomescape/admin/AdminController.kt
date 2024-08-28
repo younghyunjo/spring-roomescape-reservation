@@ -8,5 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/admin")
 class AdminController {
     @GetMapping("/reservation")
-    fun reservation(): String = "admin/reservation-legacy"
+    fun reservation(): String = "admin/reservation"
+
+    @GetMapping("time")
+    fun time(): String = "admin/time"
 }
