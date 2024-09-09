@@ -19,7 +19,7 @@ class JdbcReservationRepository(
             mapOf(
                 COLUMN_NAME to reservation.name,
                 COLUMN_DATE to reservation.date,
-                COLUMN_TIME to reservation.time,
+                COLUMN_TIME_ID to reservation.timeId,
             )
 
         val generatedId = simpleJdbcInsert.executeAndReturnKey(params)
@@ -43,7 +43,7 @@ class JdbcReservationRepository(
 
     private fun generateSelectSql() =
         """
-        SELECT $COLUMN_ID, $COLUMN_NAME, $COLUMN_DATE, $COLUMN_TIME 
+        SELECT $COLUMN_ID, $COLUMN_NAME, $COLUMN_DATE, $COLUMN_TIME_ID 
         FROM $TABLE
         """.trimIndent()
 
@@ -52,14 +52,14 @@ class JdbcReservationRepository(
         private const val COLUMN_ID = "id"
         private const val COLUMN_NAME = "name"
         private const val COLUMN_DATE = "date"
-        private const val COLUMN_TIME = "time"
+        private const val COLUMN_TIME_ID = "time_id"
 
         private fun mapRowToReservation(rs: ResultSet): Reservation =
             Reservation(
                 id = rs.getLong(COLUMN_ID),
                 name = rs.getString(COLUMN_NAME),
                 date = rs.getString(COLUMN_DATE),
-                time = rs.getString(COLUMN_TIME),
+                timeId = rs.getLong(COLUMN_TIME_ID),
             )
     }
 }

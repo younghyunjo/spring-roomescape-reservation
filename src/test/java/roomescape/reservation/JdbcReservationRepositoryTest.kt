@@ -5,16 +5,25 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import roomescape.time.JdbcTimeRepository
+import roomescape.time.Time
 
 @SpringBootTest
 class JdbcReservationRepositoryTest(
     @Autowired jdbcReservationRepository: JdbcReservationRepository,
+    @Autowired jdbcTimeRepository: JdbcTimeRepository,
 ) : BehaviorSpec({
+        beforeTest {
+            val time0 = Time(startAt = "10:00")
+            val time1 = Time(startAt = "11:00")
+            jdbcTimeRepository.insert(time0)
+            jdbcTimeRepository.insert(time1)
+        }
         Given("데이터 저장") {
             val given =
                 listOf(
-                    Reservation(1L, "A", "2023-01-01", "2023-01-02"),
-                    Reservation(2L, "A", "2023-01-01", "10:00"),
+                    Reservation(1L, "A", "2023-01-01", timeId = 1L),
+                    Reservation(2L, "A", "2023-01-01", timeId = 2L),
                 )
             jdbcReservationRepository.insert(given[0])
             jdbcReservationRepository.insert(given[1])
