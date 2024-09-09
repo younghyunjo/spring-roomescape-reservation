@@ -22,16 +22,16 @@ class JdbcReservationRepositoryTest(
         Given("데이터 저장") {
             val given =
                 listOf(
-                    Reservation(1L, "A", "2023-01-01", timeId = 1L),
-                    Reservation(2L, "A", "2023-01-01", timeId = 2L),
+                    ReservationCreateRequest("A", "2023-01-01", 1L),
+                    ReservationCreateRequest("B", "2023-01-01", 2L),
                 )
-            jdbcReservationRepository.insert(given[0])
-            jdbcReservationRepository.insert(given[1])
+            val insertedReservation0 = jdbcReservationRepository.insert(given[0])
+            val insertedReservation1 = jdbcReservationRepository.insert(given[1])
             When("데이터 불러 옴") {
                 val reservations = jdbcReservationRepository.get()
                 Then("저장된 데이터 불러옴 ") {
-                    reservations shouldContain given[0]
-                    reservations shouldContain given[1]
+                    reservations shouldContain insertedReservation0
+                    reservations shouldContain insertedReservation1
                 }
             }
             When("삭제 후 불러오기") {

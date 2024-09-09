@@ -17,8 +17,10 @@ class ReservationServiceTest(
         Given("예약 ID") {
             val givenIdForAdd = 1L
             When("add 메서드 호출하면") {
-                val reservation = Reservation(name = "브라운", date = "2023-01-01", time = "10:00")
-                every { reservationRepository.insert(reservation) } returns reservation.copy(id = givenIdForAdd)
+                val reservation = ReservationCreateRequest(name = "브라운", date = "2023-01-01", timeId = 1L)
+                every { reservationRepository.insert(reservation) } answers {
+                    Reservation(givenIdForAdd, reservation.name, reservation.date, reservation.timeId)
+                }
 
                 val newReservation = reservationService.add(reservation)
                 Then("예약 ID가 설정된다.") {
@@ -27,7 +29,7 @@ class ReservationServiceTest(
             }
         }
         Given("예약 목록") {
-            val givenReservations = listOf(Reservation(1L, "A", "2023-01-01", "10:00"), Reservation(2L, "B", "2023-01-11", "11:00"))
+            val givenReservations = listOf(Reservation(1L, "A", "2023-01-01", timeId = 1L), Reservation(2L, "B", "2023-01-11", timeId = 2L))
             When("get 메서드 호출") {
                 every { reservationRepository.get() } returns givenReservations
                 val reservations = reservationService.get()

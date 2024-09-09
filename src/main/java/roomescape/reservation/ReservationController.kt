@@ -18,7 +18,7 @@ class ReservationController(
 
     @PostMapping
     fun add(
-        @RequestBody reservation: Reservation,
+        @RequestBody reservation: ReservationCreateRequest,
     ): Reservation = reservationService.add(reservation)
 
     @DeleteMapping("/{id}")

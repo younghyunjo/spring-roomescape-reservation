@@ -14,7 +14,7 @@ class JdbcReservationRepository(
             .withTableName(TABLE)
             .usingGeneratedKeyColumns(COLUMN_ID)
 
-    override fun insert(reservation: Reservation): Reservation {
+    override fun insert(reservation: ReservationCreateRequest): Reservation {
         val params =
             mapOf(
                 COLUMN_NAME to reservation.name,
@@ -22,8 +22,13 @@ class JdbcReservationRepository(
                 COLUMN_TIME_ID to reservation.timeId,
             )
 
-        val generatedId = simpleJdbcInsert.executeAndReturnKey(params)
-        return reservation.copy(id = generatedId.toLong())
+        val generatedId = simpleJdbcInsert.executeAndReturnKey(params).toLong()
+        return getById(generatedId)!!
+    }
+
+    fun getById(id: Long): Reservation? {
+        val sql = generateSelectByIdSql()
+        return jdbcTemplate.query(sql, arrayOf(id)) { rs, _ -> mapRowToReservation(rs) }.firstOrNull()
     }
 
     override fun get(): List<Reservation> {
@@ -35,6 +40,11 @@ class JdbcReservationRepository(
         val sql = generateDeleteSql()
         jdbcTemplate.update(sql, id)
     }
+
+    private fun generateSelectByIdSql(): String =
+        """
+        SELECT $COLUMN_ID, $COLUMN_NAME, $COLUMN_DATE, $COLUMN_TIME_ID FROM $TABLE WHERE $COLUMN_ID = ? 
+        """.trimIndent()
 
     private fun generateDeleteSql(): String =
         """

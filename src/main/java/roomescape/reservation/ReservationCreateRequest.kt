@@ -1,7 +1,6 @@
 package roomescape.reservation
 
-data class Reservation(
-    val id: Long? = null,
+data class ReservationCreateRequest(
     val name: String,
     val date: String,
     val timeId: Long,
