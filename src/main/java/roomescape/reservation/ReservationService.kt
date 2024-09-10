@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 class ReservationService(
     private val reservationRepository: ReservationRepository,
 ) {
-    fun add(reservation: ReservationCreateRequest): Reservation {
+    fun create(reservation: ReservationCreateRequest): Reservation {
         val newReservation = reservationRepository.insert(reservation)
         return newReservation
     }

@@ -45,9 +45,9 @@ class JdbcTimeRepository(
         """.trimIndent()
 
     companion object {
-        private const val TABLE = "reservation_time"
-        private const val COLUMN_ID = "id"
-        private const val COLUMN_START_AT = "start_at"
+        const val TABLE = "reservation_time"
+        const val COLUMN_ID = "id"
+        const val COLUMN_START_AT = "start_at"
 
         private fun mapRowToTime(rs: ResultSet): Time =
             Time(

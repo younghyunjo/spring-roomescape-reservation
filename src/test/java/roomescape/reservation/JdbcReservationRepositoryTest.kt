@@ -32,6 +32,8 @@ class JdbcReservationRepositoryTest(
                 Then("저장된 데이터 불러옴 ") {
                     reservations shouldContain insertedReservation0
                     reservations shouldContain insertedReservation1
+                    reservations[0].time shouldBe Time(1L, "10:00")
+                    reservations[1].time shouldBe Time(2L, "11:00")
                 }
             }
             When("삭제 후 불러오기") {

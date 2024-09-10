@@ -8,7 +8,7 @@ import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
-import java.util.HashMap
+import kotlin.collections.HashMap
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -25,18 +25,29 @@ class ReservationControllerE2ETest {
     }
 
     @Test
-    fun addAndGetAndDelete() {
+    fun addTimeAndCreateReservationAndGetReservationAndDeleteReservation() {
+        val time: MutableMap<String, String> = HashMap()
+        time["startAt"] = "10:00"
+
+        Given {
+            log().all().contentType(ContentType.JSON).body(time)
+        } When {
+            post("/times")
+        } Then {
+            statusCode(200).body("id", `is`(1)).body("startAt", `is`("10:00"))
+        }
+
         val params: MutableMap<String, String> = HashMap()
         params["name"] = "브라운"
         params["date"] = "2023-08-05"
-        params["time"] = "15:40"
+        params["timeId"] = "1"
 
         Given {
             log().all().contentType(ContentType.JSON).body(params)
         } When {
             post("/reservations")
         } Then {
-            statusCode(200).body("id", `is`(1))
+            statusCode(200).body("id", `is`(1)).body("time.id", `is`(1)).body("time.startAt", `is`("10:00"))
         }
 
         Given {

@@ -3,6 +3,8 @@ package roomescape.reservation
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.stereotype.Repository
+import roomescape.time.JdbcTimeRepository
+import roomescape.time.Time
 import java.sql.ResultSet
 
 @Repository
@@ -43,7 +45,11 @@ class JdbcReservationRepository(
 
     private fun generateSelectByIdSql(): String =
         """
-        SELECT $COLUMN_ID, $COLUMN_NAME, $COLUMN_DATE, $COLUMN_TIME_ID FROM $TABLE WHERE $COLUMN_ID = ? 
+        SELECT R.$COLUMN_ID, R.$COLUMN_NAME, R.$COLUMN_DATE, R.$COLUMN_TIME_ID, T.${JdbcTimeRepository.COLUMN_START_AT} 
+        FROM $TABLE as R 
+        INNER JOIN ${JdbcTimeRepository.TABLE} as T
+        ON R.$COLUMN_ID = T.${JdbcTimeRepository.COLUMN_ID}
+        WHERE R.$COLUMN_ID = ?
         """.trimIndent()
 
     private fun generateDeleteSql(): String =
@@ -53,8 +59,10 @@ class JdbcReservationRepository(
 
     private fun generateSelectSql() =
         """
-        SELECT $COLUMN_ID, $COLUMN_NAME, $COLUMN_DATE, $COLUMN_TIME_ID 
-        FROM $TABLE
+        SELECT R.$COLUMN_ID, R.$COLUMN_NAME, R.$COLUMN_DATE, R.$COLUMN_TIME_ID, T.${JdbcTimeRepository.COLUMN_START_AT} 
+        FROM $TABLE as R 
+        INNER JOIN ${JdbcTimeRepository.TABLE} as T
+        ON R.$COLUMN_ID = T.${JdbcTimeRepository.COLUMN_ID}
         """.trimIndent()
 
     companion object {
@@ -69,7 +77,7 @@ class JdbcReservationRepository(
                 id = rs.getLong(COLUMN_ID),
                 name = rs.getString(COLUMN_NAME),
                 date = rs.getString(COLUMN_DATE),
-                timeId = rs.getLong(COLUMN_TIME_ID),
+                time = Time(rs.getLong(COLUMN_TIME_ID), rs.getString("start_at")),
             )
     }
 }
